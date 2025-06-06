@@ -12,8 +12,8 @@ def linear_transform(m: list[list[int]], v: list[int]):
 def propagate(weights_l1: list[list[int]], activations_l0: list[int]):  # linear tranformation from the light of neurons activations
 	activations_l1 = [0]*len(weights_l1)
 
-	for i, a_l0 in enumerate(weights_l1):  # for each list of weights of neurons of l0
-		for j, w_ail0_ajl1 in enumerate(a_l0):  # for each weight from a_l0_i to a_
+	for i, a_l0 in enumerate(weights_l1):  # for each list of weights of neurons of l1
+		for j, w_ail0_ajl1 in enumerate(a_l0):  # for each weight from a_l0_i to a_l1_j
 			activations_l1[i] += w_ail0_ajl1 * activations_l0[j]
 
 	return activations_l1
