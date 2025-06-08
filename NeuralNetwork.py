@@ -1,6 +1,23 @@
+from typing import Union
+
 """
 implement layer object
 own weights
+"""
+
+""" tem         pesos  biases
+	layer   0     *       
+	layer n-1            *
+	
+pesos(i) são conexões que saem de layer(i) para layer(i+1)  
+	logo, weights[i] é usado com layer[i] para gerar layer[i+1]
+	ultimo elemento de self.weights: None
+
+biases(i) são biases que entram na layer(i)
+	primeiro elemente de self.biases: NONE
+
+# WEIGHTS[i]  PERTENCEM A LAYER[i] -> geram layer[i+1]
+# BIASES[i]   PERTENCEM A LAYER[i] -> geram layer[i]
 """
 
 from random import randint
@@ -29,32 +46,32 @@ class NeuralNetwork:
 		processing
 	"""
 
-	def activation(self, i_l1: int) -> None:
+	def activate(self, i_l1: int) -> None:
 		i_l0: int = i_l1-1
-		l0: Vector = self.layers[i_l0]
 		# calculate activation function parameters
-		weights_l1: Matrix = self.weights[i_l1-1]
-		biases: Vector = self.biases[i_l1-1]
-		# aplly activation fuction
-		self.layers[i_l1] = relu(weights_l1*l0 + biases)  # error: len(biases)<len(weighted_l1*l0)
+		l0: Vector = self.layers[i_l0]
+		weights_l0: Matrix = self.weights[i_l0]
+		biases: Vector = self.biases[i_l1]
+		"""THE GOLDEN LINE"""  # aplly activation fuction
+		self.layers[i_l1] = relu(weights_l0*l0 + biases)
 
 	def process(self, inp: Vector) -> Vector:
 		self.layers[0] = inp  # load input
 		# execute propagation for each layer
-		for i_layer in range(self.n_layers - 1):
-			self.activation(i_layer+1)
+		for i_layer in range(1, self.n_layers):
+			self.activate(i_layer)
 		return self.layers[-1]
 
 	"""
 		analisis
 	"""
 
-	def analyse(self):
+	def analyse(self) -> None:
 		self.print_activations()
 		self.print_weights()
 		self.print_biases()
 
-	def print_activations(self):
+	def print_activations(self) -> None:
 		print("\nACTIVATIONS:\n")
 		for i_layer, layer in enumerate(self.layers):
 			activations: list[str] = str(layer).split('\n')
@@ -62,20 +79,20 @@ class NeuralNetwork:
 				print(f"layer_{i_layer} neuron_{i_neuron}: {activation}")
 			print()
 
-	def print_weights(self):
+	def print_weights(self) -> None:
 		print("\nWEIGHTS:\n")
 		for i_layer, matrix in enumerate(self.weights):
 			neurons_weights: list[str] = str(matrix).split('\n')
 			for i_neuron, weights in enumerate(neurons_weights):
-				print(f"layer_{i_layer+1} neuron_{i_neuron}: {weights}")
+				print(f"layer_{i_layer} neuron_{i_neuron}: {weights}")
 			print()
 
-	def print_biases(self):
+	def print_biases(self) -> None:
 		print("\nBIASES:\n")
 		for i_layer, layer_biases in enumerate(self.biases):
 			biases: list[str] = str(layer_biases).split('\n')
 			for i_neuron, bias in enumerate(biases):
-				print(f"layer_{i_layer+1} neuron_{i_neuron}: {bias}")
+				print(f"layer_{i_layer} neuron_{i_neuron}: {bias}")
 			print()
 
 	"""
@@ -96,12 +113,12 @@ class NeuralNetwork:
 		"""initialize weights"""
 		# create and fill weights with random weights
 		self.weights = []
-		# create new matrixes wich represent (l_(i+1) weights)
-		for i_layer in range(self.n_layers - 1):
+		# create new matrixes wich represent (l_i weights)
+		for i_layer in range(self.n_layers - 1):  # last layer has no weights
 			weights: Matrix = Matrix()
 			size_l0 = self.layers_sizes[i_layer]  # size of output layer
 			size_l1 = self.layers_sizes[i_layer + 1]  # size of input layer
-			# create new lines wich represent (a_(l1, i_line) weights)
+			# create new lines wich represent (a_(l0, i_line) weights)
 			for i_line in range(size_l1):
 				line: list[float] = []
 				# create new colls wich represent (a_(l1, i_line), a_(l0, i_col)) weight
@@ -110,14 +127,15 @@ class NeuralNetwork:
 					line.append(weight)
 				weights.append(line)
 			self.weights.append(weights)
+		self.weights.append(None)  # last layer has no weights
 
 		"""initialize biases"""
 		# create and fill biases with random biases
-		self.biases = []
+		self.biases = [None]  # layer[0] (input) has no bias
 		# create new biases for layer_i+1
-		for i_layer in range(self.n_layers - 1):
+		for i_layer in range(1, self.n_layers):
 			biases: Vector = Vector()
-			layer_size = layers_sizes[i_layer + 1]
+			layer_size = layers_sizes[i_layer]
 			# fill new biases with random bias
 			for i_bias in range(layer_size):
 				bias: float = randint(-10, 10) / 10

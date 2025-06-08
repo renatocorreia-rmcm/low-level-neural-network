@@ -5,6 +5,11 @@ def __str__ tells how object is represented as string,
 as is requested to it when you call print(object)
 default object string representation is it address
 """
+""" maybe define Line type, so a matrix would be a list of lines
+
+contra: pratically would be a vector
+pro:	teoretically would be the weights of a single neuron
+"""
 
 
 class Vector:
@@ -55,8 +60,6 @@ class Vector:
 		return out
 
 
-
-
 class Matrix:
 	value: list[list[float]]
 
@@ -90,10 +93,3 @@ class Matrix:
 			for i_coll, num in enumerate(line):
 				out[i_line] += num*vector[i_coll]
 		return out
-
-
-""" maybe define Line type, so a matrix would be a list of lines
-
-contra: pratically would be a vector
-pro:	teoretically would be the weights of a single neuron
-"""
