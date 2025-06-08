@@ -12,8 +12,8 @@ pesos(i) são conexões que saem de layer(i) para layer(i+1)
 biases(i) são biases que entram na layer(i)
 	primeiro elemente de self.biases: NONE
 
-# WEIGHTS[i]  PERTENCEM A LAYER[i] -> geram layer[i+1]  # i goes to n-1
-# BIASES[i]   PERTENCEM A LAYER[i] -> geram layer[i]    # i starts at 1
+# WEIGHTS[i]  PERTENCEM A LAYER[i] -> geram layer[i+1]  # i: [0, n-1[
+# BIASES[i]   PERTENCEM A LAYER[i] -> geram layer[i]    # i  ]0, n-1]
 """
 
 """ Convenção de nomeação de parâmetros referentes a camadas
