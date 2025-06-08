@@ -1,14 +1,10 @@
-from typing import Union
-
 """
 implement layer object
 own weights
 """
 
-""" tem         pesos  biases
-	layer   0     *       
-	layer n-1            *
-	
+"""	Conveção da indexação dos parâmetros da rede neural
+
 pesos(i) são conexões que saem de layer(i) para layer(i+1)  
 	logo, weights[i] é usado com layer[i] para gerar layer[i+1]
 	ultimo elemento de self.weights: None
@@ -16,8 +12,15 @@ pesos(i) são conexões que saem de layer(i) para layer(i+1)
 biases(i) são biases que entram na layer(i)
 	primeiro elemente de self.biases: NONE
 
-# WEIGHTS[i]  PERTENCEM A LAYER[i] -> geram layer[i+1]
-# BIASES[i]   PERTENCEM A LAYER[i] -> geram layer[i]
+# WEIGHTS[i]  PERTENCEM A LAYER[i] -> geram layer[i+1]  # i goes to n-1
+# BIASES[i]   PERTENCEM A LAYER[i] -> geram layer[i]    # i starts at 1
+"""
+
+""" Convenção de nomeação de parâmetros referentes a camadas
+
+l0 e l1 não representam necessariamente self.layers[0] e self.layers[1],
+	mas sim self.layers[i] e self.layers[i+1] respectivamente,
+	para qualquer self.layers[i] que esteja em operaração
 """
 
 from random import randint
