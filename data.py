@@ -92,7 +92,6 @@ class Matrix:
 		return out
 
 
-
 """ maybe define Line type, so a matrix would be a list of lines
 
 contra: pratically would be a vector
