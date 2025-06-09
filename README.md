@@ -11,7 +11,12 @@ im not following any implementation tutorial btw.
 
 All the network structure is based on the [neural network conceitual explanation by 3blue1brown](https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&feature=shared)
 
+## Overview
+
+
+
 
 ## ToDo
 - Cost function
 - Back Propagation
+- .txt for parameters backup
