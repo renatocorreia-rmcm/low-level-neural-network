@@ -20,5 +20,9 @@ taking amount and size of layers as arguments
 
 ## ToDo
 - Cost function
-- Back Propagation
 - .txt for parameters backup
+    - dimentions
+    - weights and biases
+    - activation function used
+    - cost function used
+- Back Propagation
