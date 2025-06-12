@@ -1,0 +1,40 @@
+from random import randint
+
+cases = 5
+
+print('[')
+for i in range(2*cases):
+
+    print('[')
+
+    # input matrix
+    print('\"\"\"')
+    print('[')
+
+    for i in range (28):
+        for j in range(28):
+            x = str(randint(0,99))
+            x = " "*(2-len(x)) + x 
+            print(x, end=", ")
+        print()
+
+    print('],')
+    print('\"\"\"')
+
+
+    # output vector
+    print('\"\"\"')
+    print('[')
+
+    for i in range(9):
+        x = str(randint(0,10))
+        x = " "*(2-len(x)) + x 
+        print(x, end=",\n")
+
+    print(']')
+    print('\"\"\"')
+
+
+    print(']')
+
+print(']')
