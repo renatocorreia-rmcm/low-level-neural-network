@@ -23,11 +23,16 @@ l0 e l1 não representam necessariamente self.layers[0] e self.layers[1],
 	para qualquer self.layers[i] que esteja em operaração
 """
 
+
 from random import randint
 
 from data import Vector
 from data import Matrix
 
+
+"""
+	functions
+"""
 
 def relu(z: Vector) -> Vector:
 	out: Vector = Vector(size=len(z))
@@ -36,11 +41,15 @@ def relu(z: Vector) -> Vector:
 	return out
 
 def quadratic_loss(target: Vector, x: Vector):
-	cost: Vector = (target-x)
+	cost: Vector = (x-target)
 	for i in range(len(target)):
 		cost[i]**=2
 	return cost
 
+
+"""
+	CLASS
+"""
 
 class NeuralNetwork:
 	# layers
@@ -60,9 +69,9 @@ class NeuralNetwork:
 		# calculate activation function parameters
 		l0: Vector = self.layers[i_l0]
 		weights_l0: Matrix = self.weights[i_l0]
-		biases: Vector = self.biases[i_l1]
+		biases_l1: Vector = self.biases[i_l1]
 		"""THE GOLDEN LINE"""  # aplly activation fuction
-		self.layers[i_l1] = relu(weights_l0*l0 + biases)
+		self.layers[i_l1] = relu(weights_l0*l0 + biases_l1)
 
 	def process(self, feed: list[int]) -> Vector:
 		feed: Vector = Vector(feed)
@@ -81,6 +90,9 @@ class NeuralNetwork:
 		target: Vector = Vector(target)
 
 		cost: Vector = quadratic_loss(target, self.layers[-1])
+		print(cost)
+
+
 
 	"""
 		analisis
