@@ -35,6 +35,12 @@ def relu(z: Vector) -> Vector:
 		out[i] = max(0.0, activation)
 	return out
 
+def quadratic_loss(target: Vector, x: Vector):
+	cost: Vector = (target-x)
+	for i in range(len(target)):
+		cost[i]**=2
+	return cost
+
 
 class NeuralNetwork:
 	# layers
@@ -58,12 +64,23 @@ class NeuralNetwork:
 		"""THE GOLDEN LINE"""  # aplly activation fuction
 		self.layers[i_l1] = relu(weights_l0*l0 + biases)
 
-	def process(self, inp: Vector) -> Vector:
-		self.layers[0] = inp  # load input
+	def process(self, feed: list[int]) -> Vector:
+		feed: Vector = Vector(feed)
+		# load input
+		self.layers[0] = feed  
 		# execute propagation for each layer
 		for i_layer in range(1, self.n_layers):
 			self.activate(i_layer)
 		return self.layers[-1]
+	
+	"""
+		learning
+	"""
+
+	def backpropagate(self, target: list[int]):
+		target: Vector = Vector(target)
+
+		cost: Vector = quadratic_loss(target, self.layers[-1])
 
 	"""
 		analisis
@@ -97,6 +114,20 @@ class NeuralNetwork:
 			for i_neuron, bias in enumerate(biases):
 				print(f"layer_{i_layer} neuron_{i_neuron}: {bias}")
 			print()
+
+	def print_output(self) -> None:
+		print("\nOUTPUT:\n")
+		activations: list[str] = str(self.layers[-1]).split('\n')
+		for activation in activations:
+			print(activation)
+		print()
+
+	def learn(self) -> None:
+		cost_l0:Vector = quadratic_loss(self.layers[-1])
+		
+		return 
+		
+
 
 	"""
 		constructor
