@@ -40,6 +40,7 @@ data_set = [  # list of input: Matrix, target: Vector
             10,
             3,
             0,
+            1
         ]
     
     ],
@@ -85,6 +86,7 @@ data_set = [  # list of input: Matrix, target: Vector
             6,
             4,
             1,
+            2
         ]
     
     ],
@@ -130,6 +132,7 @@ data_set = [  # list of input: Matrix, target: Vector
             2,
             5,
             6,
+            3
         ]
     
     ],
@@ -175,6 +178,7 @@ data_set = [  # list of input: Matrix, target: Vector
             6,
             4,
             3,
+            4
         ]
         
     ]
