@@ -63,8 +63,13 @@ class Vector:
 
 	def __add__(self, other: Vector) -> Vector:
 		out: Vector = Vector(size=len(self))
-		for i, data in enumerate(self):
+		for i in range(len(self)):
 			out[i] = self[i]+other[i]
+		return out
+	def __sub__(self, other: Vector) -> Vector:
+		out: Vector = Vector(size=len(self))
+		for i in range(len(self)):
+			out[i] = self[i]-other[i]
 		return out
 
 
