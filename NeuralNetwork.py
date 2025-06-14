@@ -1,6 +1,6 @@
 """
 implement layer object
-own weights
+better modularization of parameters
 """
 
 """	Conveção da indexação dos parâmetros da rede neural
@@ -40,6 +40,15 @@ def relu(z: Vector) -> Vector:
 		out[i] = max(0.0, activation)
 	return out
 
+def sigmoid(z: Vector) -> Vector:
+	out: Vector = Vector()
+	return out
+
+def sigmoid_derivative(z: Vector) -> Vector:
+	out: Vector = Vector()
+	return out
+
+
 def quadratic_loss(target: Vector, x: Vector):
 	cost: Vector = (x-target)
 	for i in range(len(target)):
@@ -55,10 +64,12 @@ class NeuralNetwork:
 	# layers
 	n_layers: int
 	layers_sizes: list[int]
-	layers: list[Vector]
+	layers: list[Vector]  # hold activations
 	# parameters
 	weights: list[Matrix]
 	biases: list[Vector]
+	# z
+	z: list[Vector]  # stored for computing partial derivative in backpropagation
 
 	"""
 		processing
@@ -70,27 +81,88 @@ class NeuralNetwork:
 		l0: Vector = self.layers[i_l0]
 		weights_l0: Matrix = self.weights[i_l0]
 		biases_l1: Vector = self.biases[i_l1]
-		"""THE GOLDEN LINE"""  # aplly activation fuction
-		self.layers[i_l1] = relu(weights_l0*l0 + biases_l1)
+		# z
+		z: Vector = weights_l0*l0 + biases_l1
+		self.z[i_l1] = z  # store to access in backpropagation
+		# apply activation function
+		self.layers[i_l1] = relu(z)
 
 	def process(self, feed: list[int]) -> Vector:
 		feed: Vector = Vector(feed)
 		# load input
-		self.layers[0] = feed  
+		self.layers[0] = feed
 		# execute propagation for each layer
 		for i_layer in range(1, self.n_layers):
 			self.activate(i_layer)
 		return self.layers[-1]
-	
+
+
 	"""
 		learning
 	"""
 
-	def backpropagate(self, target: list[int]):
-		target: Vector = Vector(target)
+	"""parameters"""
+	# gradients - sum over all data points and take average later  # could it be permanently = {0} if all changes were done in a learn_batch call scope?
+	weights_gradients: list[Matrix]
+	biases_gradients: list[Vector]
+	# partial derivatives - reset after each data point
+	activations_partial_derivatives: list[Vector]
+	z_partial_derivatives: list[Vector]
 
-		cost: Vector = quadratic_loss(target, self.layers[-1])
-		print(cost)
+	"""operations"""
+	def reset_gradient(self):
+		for i_layer in range(self.n_layers):  # for each layer, reset his Vectors activations_gradient, biases_gradient and his Matrix weights_gradient
+			self.activations_partial_derivatives[i_layer].reset()  # not used to subtract after, since its not a parameter neither a element of the gradient, but used to store the partial derivatives and access them in next layer without repeating calculations
+			self.weights_gradients[i_layer].reset()
+			self.biases_gradients[i_layer].reset()
+
+	"""	def learn_batch(self, batch):
+		
+		self.reset_gradient() 
+		
+		
+		for data_point in batch:  # sum gradient of all data_points in a batch
+			feature, target = data_point.split()
+			self.process(feature)  # calculate prediction
+			cost: Vector = quadratic_loss(target, self.layers[-1])
+			self.backpropagate(cost, target)
+		for i_layer in range(self.n_layers):  # subtract gradient from parameters
+			self.biases[i_layer] -= self.biases_gradients[i_layer]
+			self.weights[i_layer] -= self.weights_gradients[i_layer]"""
+
+	def learn_batch(self, batch):
+
+		for data_point in batch:
+			"""cost"""
+			feature, target = data_point.split()
+			self.process(feature)  # calculate prediction
+			cost: Vector = quadratic_loss(target, self.layers[-1])
+			"""partial derivatives of cost in relation to each activation and each z"""
+			# initial (output layer)
+			i_layer: int = -1
+			self.activations_partial_derivatives[i_layer] = sigmoid_derivative(self.z[i_layer])
+			self.z_partial_derivatives[i_layer] = weight  # what weight
+			# hidden layers
+			for i_layer in range(self.n_layers-1)[::-1]:  # iterating layers backwards
+				self.activations_partial_derivatives[i_layer] =
+				self.z_partial_derivatives[i_layer] =
+
+
+
+
+	def backpropagate(self, cost: Vector, target: Vector):  # compute gradient
+
+		# initial step
+		"""
+		C0/aL = 2*(aL-Y)
+		"""
+		self.activations_partial_derivatives[-1] = 2*(self.layers[-1]-target)
+
+		# final
+		"""
+		al/zl = o'(zl)
+		"""
+		self.z_partial_derivatives[-1] = sigmoid_derivative(self.z[-1])
 
 
 
@@ -133,12 +205,6 @@ class NeuralNetwork:
 		for activation in activations:
 			print(activation)
 		print()
-
-	def learn(self) -> None:
-		cost_l0:Vector = quadratic_loss(self.layers[-1])
-		
-		return 
-		
 
 
 	"""
@@ -187,3 +253,8 @@ class NeuralNetwork:
 				bias: float = randint(-10, 10) / 10
 				biases.append(bias)
 			self.biases.append(biases)
+
+		"""initialize z"""
+		# fill z with void vectors to overwrite it after
+		for size in self.layers_sizes:
+			self.z.append(Vector(size=size))
