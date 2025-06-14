@@ -112,7 +112,6 @@ class NeuralNetwork:
 	"""operations"""
 	def reset_gradient(self):
 		for i_layer in range(self.n_layers):  # for each layer, reset his Vectors activations_gradient, biases_gradient and his Matrix weights_gradient
-			self.activations_partial_derivatives[i_layer].reset()  # not used to subtract after, since its not a parameter neither a element of the gradient, but used to store the partial derivatives and access them in next layer without repeating calculations
 			self.weights_gradients[i_layer].reset()
 			self.biases_gradients[i_layer].reset()
 
@@ -151,19 +150,7 @@ class NeuralNetwork:
 
 
 	def backpropagate(self, cost: Vector, target: Vector):  # compute gradient
-
-		# initial step
-		"""
-		C0/aL = 2*(aL-Y)
-		"""
-		self.activations_partial_derivatives[-1] = 2*(self.layers[-1]-target)
-
-		# final
-		"""
-		al/zl = o'(zl)
-		"""
-		self.z_partial_derivatives[-1] = sigmoid_derivative(self.z[-1])
-
+		return
 
 
 	"""
