@@ -15,7 +15,6 @@ contra: pratically would be a vector
 pro:	teoretically would be the weights of a single neuron
 """
 
-
 class Vector:
 	value: list[float]
 
@@ -34,6 +33,9 @@ class Vector:
 			else:
 				value = [0]*size
 		self.value = value
+
+	def reset(self):  # set all values to 0 keeping dimention constant
+		self.value = [0]*len(self)
 
 	def append(self, data: float) -> None:
 		self.value.append(data)
@@ -71,6 +73,11 @@ class Vector:
 		for i in range(len(self)):
 			out[i] = self[i]-other[i]
 		return out
+	def __rmul__(self, scalar: int):
+		out: Vector = self
+		for i in range(len(self)):
+			out[i]*=2
+		return out
 
 
 class Matrix:
@@ -80,6 +87,11 @@ class Matrix:
 		if value is None:
 			value = []
 		self.value = value
+
+	def reset(self):  # set all values to 0 keeping dimensions constant
+		self.value = [
+						 [0]*len(self[0])
+					 ]*len(self)
 
 	def append(self, line: list[float]) -> None:
 		self.value.append(line)
@@ -109,4 +121,13 @@ class Matrix:
 		for i_line, line in enumerate(self):
 			for i_coll, num in enumerate(line):
 				out[i_line] += num*vector[i_coll]
+		return out
+
+	def __sub__(self, other: Matrix):
+		out: Matrix = Matrix()
+		for i_line in range(len(self)):
+			out.append([])
+			for i_coll in range(len(self[0])):
+				out[i_line].append(self[i_line][i_coll]-other[i_line][i_coll])
+
 		return out
