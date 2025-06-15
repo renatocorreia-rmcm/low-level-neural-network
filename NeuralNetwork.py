@@ -49,10 +49,10 @@ def sigmoid_derivative(z: Vector) -> Vector:
 	return out
 
 
-def quadratic_loss(target: Vector, x: Vector):
-	cost: Vector = (x-target)
-	for i in range(len(target)):
-		cost[i]**=2
+def quadratic_loss(target: Vector, prediction: Vector) -> float:
+	cost: float = 0
+	for i_activation in range(len(target)):
+		cost += (prediction[i_activation] - target[i_activation])
 	return cost
 
 
@@ -115,36 +115,27 @@ class NeuralNetwork:
 			self.weights_gradients[i_layer].reset()
 			self.biases_gradients[i_layer].reset()
 
-	"""	def learn_batch(self, batch):
-		
-		self.reset_gradient() 
-		
-		
-		for data_point in batch:  # sum gradient of all data_points in a batch
-			feature, target = data_point.split()
-			self.process(feature)  # calculate prediction
-			cost: Vector = quadratic_loss(target, self.layers[-1])
-			self.backpropagate(cost, target)
-		for i_layer in range(self.n_layers):  # subtract gradient from parameters
-			self.biases[i_layer] -= self.biases_gradients[i_layer]
-			self.weights[i_layer] -= self.weights_gradients[i_layer]"""
-
 	def learn_batch(self, batch):
 
 		for data_point in batch:
 			"""cost"""
 			feature, target = data_point.split()
 			self.process(feature)  # calculate prediction
-			cost: Vector = quadratic_loss(target, self.layers[-1])
-			"""partial derivatives of cost in relation to each activation and each z"""
-			# initial (output layer)
-			i_layer: int = -1
-			self.activations_partial_derivatives[i_layer] = sigmoid_derivative(self.z[i_layer])
-			self.z_partial_derivatives[i_layer] = weight  # what weight
-			# hidden layers
-			for i_layer in range(self.n_layers-1)[::-1]:  # iterating layers backwards
-				self.activations_partial_derivatives[i_layer] =
-				self.z_partial_derivatives[i_layer] =
+			cost: float = quadratic_loss(target, self.layers[-1])
+
+			"""vector: partial derivatives of cost in relation to each activation"""
+			# ∂(C0/aL)
+			aL: Vector = self.layers[-1]
+			vec: Vector = 2*(aL-target)
+			"""vector: partial derivatives of activations in relation to each z"""
+			# ∂(aL/z)
+			zL: Vector = self.z[-1]
+			vec: Vector = sigmoid_derivative(zL)
+			"""list[matrix]: partial derivative of zL in relation to WL"""
+				# zL is a vec, while WL is a matrix. so we get a list, where each element is a matrix related to a element of ZL
+			# ∂(zL/WL)
+			al: Vector = self.layers[-2]  # a_l-1
+			vec: Vector
 
 
 
