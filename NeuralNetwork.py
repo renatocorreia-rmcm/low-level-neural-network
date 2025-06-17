@@ -4,6 +4,7 @@ better modularization of parameters
 """
 import math
 
+
 """	Conveção da indexação dos parâmetros da rede neural
 
 pesos(i) são conexões que saem de layer(i) para layer(i+1)  
