@@ -4,7 +4,6 @@
 
 from __future__ import annotations  # allows to refeer to Vector type inside Vector class definition
 
-
 """
 def __str__ tells how object is represented as string,
 as is requested to it when you call print(object)
@@ -15,6 +14,7 @@ default object string representation is it address
 contra: pratically would be a vector
 pro:	teoretically would be the weights of a single neuron
 """
+
 
 class Vector:
 	value: list[float]
@@ -32,11 +32,11 @@ class Vector:
 			if size is None:
 				value = []
 			else:
-				value = [0]*size
+				value = [0] * size
 		self.value = value
 
 	def reset(self):  # set all values to 0 keeping dimention constant
-		self.value = [0]*len(self)
+		self.value = [0] * len(self)
 
 	def append(self, data: float) -> None:
 		self.value.append(data)
@@ -67,35 +67,41 @@ class Vector:
 	def __add__(self, other: Vector) -> Vector:
 		out: Vector = Vector(size=len(self))
 		for i in range(len(self)):
-			out[i] = self[i]+other[i]
+			out[i] = self[i] + other[i]
 		return out
+
 	def __sub__(self, other: Vector) -> Vector:
 		out: Vector = Vector(size=len(self))
 		for i in range(len(self)):
-			out[i] = self[i]-other[i]
+			out[i] = self[i] - other[i]
 		return out
+
 	def __rmul__(self, scalar: int):
 		out: Vector = self
 		for i in range(len(self)):
-			out[i]*=2
+			out[i] *= 2
 		return out
+
 	def __neg__(self):
 		out: Vector = self
 		for i in range(len(self)):
-			out[i]*=-1
+			out[i] *= -1
 		return out
+
 	def __rpow__(self, base: float):
 		out: Vector = self
 		for i in range(len(self)):
-			out[i] = base**out[i]
+			out[i] = base ** out[i]
 		return out
+
 	def __mul__(self, other: Vector):  # Hadamard Product
 		out: Vector = self
 		for i in range(len(other)):
-			out[i]*=other[i]
+			out[i] *= other[i]
 		return out
+
 	def __rsub__(self, other: float):
-		out: Vector = Vector([other]*len(self))
+		out: Vector = Vector([other] * len(self))
 		out -= self
 		return out
 
@@ -110,8 +116,8 @@ class Matrix:
 
 	def reset(self):  # set all values to 0 keeping dimensions constant
 		self.value = [
-						 [0]*len(self[0])
-					 ]*len(self)
+						 [0] * len(self[0])
+					 ] * len(self)
 
 	def append(self, line: list[float]) -> None:
 		self.value.append(line)
@@ -130,7 +136,8 @@ class Matrix:
 		text += str(self.value[-1])
 		return text
 
-	def __iter__(self):  # -> Iterator wich should be imported from Typing  # defines an interator to object allowing enumerate(matrix)  # the iterator created in this case its just the default iterator for list[list[float]]
+	def __iter__(
+			self):  # -> Iterator wich should be imported from Typing  # defines an interator to object allowing enumerate(matrix)  # the iterator created in this case its just the default iterator for list[list[float]]
 		return iter(self.value)
 
 	def __len__(self) -> int:
@@ -140,7 +147,7 @@ class Matrix:
 		out: Vector = Vector(size=len(self))
 		for i_line, line in enumerate(self):
 			for i_coll, num in enumerate(line):
-				out[i_line] += num*vector[i_coll]
+				out[i_line] += num * vector[i_coll]
 		return out
 
 	def __sub__(self, other: Matrix):
@@ -148,6 +155,6 @@ class Matrix:
 		for i_line in range(len(self)):
 			out.append([])
 			for i_coll in range(len(self[0])):
-				out[i_line].append(self[i_line][i_coll]-other[i_line][i_coll])
+				out[i_line].append(self[i_line][i_coll] - other[i_line][i_coll])
 
 		return out

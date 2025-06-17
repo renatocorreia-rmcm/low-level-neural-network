@@ -24,16 +24,15 @@ l0 e l1 não representam necessariamente self.layers[0] e self.layers[1],
 	para qualquer self.layers[i] que esteja em operaração
 """
 
-
 from random import randint
 
 from data import Vector
 from data import Matrix
 
-
 """
 	functions
 """
+
 
 def relu(z: Vector) -> Vector:
 	out: Vector = Vector(size=len(z))
@@ -41,13 +40,15 @@ def relu(z: Vector) -> Vector:
 		out[i] = max(0.0, activation)
 	return out
 
+
 def sigmoid(z: Vector) -> Vector:
 	out: Vector
-	out = (1/(1+(math.e**(-z))))
+	out = (1 / (1 + (math.e ** (-z))))
 	return out
 
+
 def sigmoid_derivative(z: Vector) -> Vector:
-	out: Vector = sigmoid(z)*(1-sigmoid(z))
+	out: Vector = sigmoid(z) * (1 - sigmoid(z))
 	return out
 
 
@@ -61,6 +62,7 @@ def quadratic_loss(target: Vector, prediction: Vector) -> float:
 """
 	CLASS
 """
+
 
 class NeuralNetwork:
 	# layers
@@ -78,13 +80,13 @@ class NeuralNetwork:
 	"""
 
 	def activate(self, i_l1: int) -> None:
-		i_l0: int = i_l1-1
+		i_l0: int = i_l1 - 1
 		# calculate activation function parameters
 		l0: Vector = self.layers[i_l0]
 		weights_l0: Matrix = self.weights[i_l0]
 		biases_l1: Vector = self.biases[i_l1]
 		# z
-		z: Vector = weights_l0*l0 + biases_l1
+		z: Vector = weights_l0 * l0 + biases_l1
 		self.z[i_l1] = z  # store to access in backpropagation
 		# apply activation function
 		self.layers[i_l1] = relu(z)
@@ -97,7 +99,6 @@ class NeuralNetwork:
 		for i_layer in range(1, self.n_layers):
 			self.activate(i_layer)
 		return self.layers[-1]
-
 
 	"""
 		learning
@@ -112,8 +113,10 @@ class NeuralNetwork:
 	z_partial_derivatives: list[Vector]
 
 	"""operations"""
+
 	def reset_gradient(self):
-		for i_layer in range(self.n_layers):  # for each layer, reset his Vectors activations_gradient, biases_gradient and his Matrix weights_gradient
+		for i_layer in range(
+				self.n_layers):  # for each layer, reset his Vectors activations_gradient, biases_gradient and his Matrix weights_gradient
 			self.weights_gradients[i_layer].reset()
 			self.biases_gradients[i_layer].reset()
 
@@ -128,23 +131,19 @@ class NeuralNetwork:
 			"""vector: partial derivatives of cost in relation to each activation"""
 			# ∂(C0/aL)
 			aL: Vector = self.layers[-1]
-			vec: Vector = 2*(aL-target)
+			vec: Vector = 2 * (aL - target)
 			"""vector: partial derivatives of activations in relation to each z"""
 			# ∂(aL/z)
 			zL: Vector = self.z[-1]
 			vec: Vector = sigmoid_derivative(zL)
 			"""list[matrix]: partial derivative of zL in relation to WL"""
-				# zL is a vec, while WL is a matrix. so we get a list, where each element is a matrix related to a element of ZL
+			# zL is a vec, while WL is a matrix. so we get a list, where each element is a matrix related to a element of ZL
 			# ∂(zL/WL)
 			al: Vector = self.layers[-2]  # a_l-1
 			vec: Vector
 
-
-
-
 	def backpropagate(self, cost: Vector, target: Vector):  # compute gradient
 		return
-
 
 	"""
 		analisis
@@ -186,10 +185,10 @@ class NeuralNetwork:
 			print(activation)
 		print()
 
-
 	"""
 		constructor
 	"""
+
 	def __init__(self, layers_sizes: list[int]):
 
 		"""initialize layers"""
