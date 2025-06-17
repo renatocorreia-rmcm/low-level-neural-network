@@ -2,6 +2,7 @@
 implement layer object
 better modularization of parameters
 """
+import math
 
 """	Conveção da indexação dos parâmetros da rede neural
 
@@ -41,11 +42,12 @@ def relu(z: Vector) -> Vector:
 	return out
 
 def sigmoid(z: Vector) -> Vector:
-	out: Vector = Vector()
+	out: Vector
+	out = (1/(1+(math.e**(-z))))
 	return out
 
 def sigmoid_derivative(z: Vector) -> Vector:
-	out: Vector = Vector()
+	out: Vector = sigmoid(z)*(1-sigmoid(z))
 	return out
 
 

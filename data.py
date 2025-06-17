@@ -4,6 +4,8 @@
 
 from __future__ import annotations  # allows to refeer to Vector type inside Vector class definition
 
+from samba.kcc.graph import VertexColor
+
 """
 def __str__ tells how object is represented as string,
 as is requested to it when you call print(object)
@@ -77,6 +79,25 @@ class Vector:
 		out: Vector = self
 		for i in range(len(self)):
 			out[i]*=2
+		return out
+	def __neg__(self):
+		out: Vector = self
+		for i in range(len(self)):
+			out[i]*=-1
+		return out
+	def __rpow__(self, base: float):
+		out: Vector = self
+		for i in range(len(self)):
+			out[i] = base**out[i]
+		return out
+	def __mul__(self, other: Vector):  # Hadamard Product
+		out: Vector = self
+		for i in range(len(other)):
+			out[i]*=other[i]
+		return out
+	def __rsub__(self, other: float):
+		out: Vector = Vector([other]*len(self))
+		out -= self
 		return out
 
 
