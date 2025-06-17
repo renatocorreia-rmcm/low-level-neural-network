@@ -4,7 +4,6 @@
 
 from __future__ import annotations  # allows to refeer to Vector type inside Vector class definition
 
-from samba.kcc.graph import VertexColor
 
 """
 def __str__ tells how object is represented as string,
