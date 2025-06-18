@@ -64,16 +64,35 @@ class Vector:
 	def __iter__(self):  # -> Iterator wich shoul be imported from Typing
 		return iter(self.value)
 
-	def __add__(self, other: Vector) -> Vector:
-		out: Vector = Vector(size=len(self))
+	def __add__(self, other: any) -> Vector:
+		# argument checking
+		if isinstance(other, Vector):
+			pass
+		elif isinstance(other, (int, float)):
+			other: Vector = Vector([other] * len(self))
+		else:
+			print("type error")
+		# calculus
+		out: Vector = self
 		for i in range(len(self)):
-			out[i] = self[i] + other[i]
+			out[i] += other[i]
 		return out
 
-	def __sub__(self, other: Vector) -> Vector:
-		out: Vector = Vector(size=len(self))
+	def __radd__(self, other: any):
+		return self.__add__(other)
+
+	def __sub__(self, other: any) -> Vector:
+		return self.__add__(-other)
+
+	def __rsub__(self, other: any) -> Vector:
+		return -self.__sub__(other)
+
+	def __rtruediv__(self, other: float) -> Vector:
+		out: Vector = Vector([other]*len(self))
+
 		for i in range(len(self)):
-			out[i] = self[i] - other[i]
+			out[i] /= self[i]
+
 		return out
 
 	def __rmul__(self, scalar: int):
@@ -98,11 +117,6 @@ class Vector:
 		out: Vector = self
 		for i in range(len(other)):
 			out[i] *= other[i]
-		return out
-
-	def __rsub__(self, other: float):
-		out: Vector = Vector([other] * len(self))
-		out -= self
 		return out
 
 
