@@ -1,23 +1,3 @@
-"""
-implement layer object
-better modularization of parameters
-"""
-import math
-
-
-"""	Conveção da indexação dos parâmetros da rede neural
-
-pesos(i) são conexões que saem de layer(i) para layer(i+1)  
-	logo, weights[i] é usado com layer[i] para gerar layer[i+1]
-	ultimo elemento de self.weights: None
-
-biases(i) são biases que entram na layer(i)
-	primeiro elemente de self.biases: NONE
-
-# WEIGHTS[i]  PERTENCEM A LAYER[i] -> geram layer[i+1]  # i: [0, n-1[
-# BIASES[i]   PERTENCEM A LAYER[i] -> geram layer[i]    # i  ]0, n-1]
-"""
-
 """ Nova	Conveção da indexação dos parâmetros da rede neural
 
 pesos(i) são conexões que saem de layer(i-1) para layer(i)  
@@ -41,6 +21,7 @@ os parâmetros l0 e l1 não representam necessariamente self.layers[0] e self.la
 """
 
 from random import randint
+from math import e
 
 from data import Vector
 from data import Matrix
@@ -52,7 +33,7 @@ from data import Matrix
 
 def sigmoid(z: Vector) -> Vector:
 	out: Vector
-	out = (1 / (1 + (math.e ** (-z))))
+	out = (1 / (1 + (e ** (-z))))
 	return out
 
 
