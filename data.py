@@ -4,17 +4,6 @@
 
 from __future__ import annotations  # allows to refeer to Vector type inside Vector class definition
 
-"""
-def __str__ tells how object is represented as string,
-as is requested to it when you call print(object)
-default object string representation is it address
-"""
-""" maybe define Line type, so a matrix would be a list of lines
-
-contra: pratically would be a vector
-pro:	teoretically would be the weights of a single neuron
-"""
-
 
 class Vector:
 	value: list[float]
