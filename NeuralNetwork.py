@@ -1,18 +1,31 @@
-""" Nova	Conveção da indexação dos parâmetros da rede neural
+"""
+	The object of this class is a fully connected neural network
+	of given size.
+	It name and parameters may be backuped automatically in a .txt,
+	well as loaded from the .txt back to the object.
 
-pesos(i) são conexões que saem de layer(i-1) para layer(i)  
-	logo, weights[i] é usado com layer[i-1] para gerar layer[i]
-	primeiro elemento de self.weights: None
-
-biases(i) são biases que entram na layer(i)
-	primeiro elemente de self.biases: None 
-
+	Its most relevant methods are:
+		process(data_point)  # calculate prediction
+		learn_batch(batch)  # calculate prediction and cost, then backpropagate
+		analyse()  #  print parameters
 """
 
 
-""" Convenção de nomeação de parâmetros referentes a camadas
+""" CONVEÇÕES DESTA IMPLEMENTAÇÃO
 
-os parâmetros l0 e l1 não representam necessariamente self.layers[0] e self.layers[1],
+Conveção da indexação dos parâmetros da rede neural
+
+	pesos(i) são conexões que saem de layer(i-1) para layer(i)  
+	logo, weights[i] é usado com layer[i-1] para gerar layer[i]
+	primeiro elemento de self.weights: None
+
+	biases(i) são biases que entram na layer(i)
+	primeiro elemente de self.biases: None 
+
+ 
+Convenção de nomeação de parâmetros referentes a camadas
+
+	os parâmetros l0 e l1 não representam necessariamente self.layers[0] e self.layers[1],
 	mas sim self.layers[i] e self.layers[i+1] respectivamente,
 	para qualquer i que tenha sido passado como argumento
 	
@@ -20,33 +33,19 @@ os parâmetros l0 e l1 não representam necessariamente self.layers[0] e self.la
 	que não necessariamente são a 0 e a 1
 """
 
+
+"""
+	external dependencies
+"""
+
 from random import randint
-from math import e
 
 from data import Vector
 from data import Matrix
 
-"""
-	functions
-"""
-
-
-def sigmoid(z: Vector) -> Vector:
-	out: Vector
-	out = (1 / (1 + (e ** (-z))))
-	return out
-
-
-def sigmoid_derivative(z: Vector) -> Vector:
-	out: Vector = sigmoid(z) * (1 - sigmoid(z))
-	return out
-
-
-def quadratic_loss(target: Vector, prediction: Vector) -> float:
-	cost: float = 0
-	for i_activation in range(len(target)):
-		cost += (prediction[i_activation] - target[i_activation])
-	return cost
+from mathematical_functions import sigmoid
+from mathematical_functions import sigmoid_derivative
+from mathematical_functions import quadratic_loss
 
 
 """
@@ -73,18 +72,18 @@ class NeuralNetwork:
 		l0: Vector = self.layers[i_l0]
 		weights_l1: Matrix = self.weights[i_l1]
 		biases_l1: Vector = self.biases[i_l1]
-		z: Vector = weights_l1 * l0 + biases_l1
+		z_l1: Vector = weights_l1 * l0 + biases_l1
 		# apply activation function
-		self.layers[i_l1] = sigmoid(z)
+		self.layers[i_l1] = sigmoid(z_l1)
 
-	def process(self, feature: list[int]) -> Vector:
+	def process(self, feature: list[float]) -> list[float]:
 		feature: Vector = Vector(feature)
 		# load input
 		self.layers[0] = feature
 		# execute propagation for each layer
 		for i_layer in range(1, self.n_layers):
 			self.activate(i_layer)
-		return self.layers[-1]
+		return list(self.layers[-1])
 
 	"""
 		learning
@@ -108,9 +107,9 @@ class NeuralNetwork:
 		for data_point in batch:
 			feature, target = data_point.split()
 			# forward go - calculate prediction
-			self.process(feature)
+			prediction: Vector = Vector(self.process(feature))
 			# reach end - calculate cost
-			cost: float = quadratic_loss(target, self.layers[-1])
+			cost: float = quadratic_loss(target, prediction)
 			# backward go - calculate error signal for each layer - get gradient for each parameter
 
 	def backpropagate(self, cost: Vector, target: Vector):  # compute gradient

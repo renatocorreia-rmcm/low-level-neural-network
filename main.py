@@ -8,11 +8,10 @@ from data import Vector
 
 jorge: NeuralNetwork = NeuralNetwork([3, 3, 2])
 
+feature_0: list[float] = [30, 50, 10]
 
-data_point = [30, 50, 70]
+prediction_0: list[float] = jorge.process(feature_0)
 
-
-prediction_0: Vector = jorge.process(data_point)
-
+print(jorge.analyse())
 
 print(prediction_0)
