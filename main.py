@@ -1,15 +1,13 @@
 from NeuralNetwork import NeuralNetwork
 from data import Vector
-from data_set import data_set
 
-jorge: NeuralNetwork = NeuralNetwork([784, 16, 16, 10])
-
-
-case = data_set[0]
+jorge: NeuralNetwork = NeuralNetwork([3, 3, 2])
 
 
-jorge.process(case[0])
+data_point = [30, 50, 70]
 
-jorge.backpropagate(case[1])
 
-jorge.print_output()
+prediction_0: Vector = jorge.process(data_point)
+
+
+print(prediction_0)
