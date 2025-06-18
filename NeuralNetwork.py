@@ -89,34 +89,39 @@ class NeuralNetwork:
 		learning
 	"""
 
-	"""parameters"""
-	# gradients - sum over all data points and take average later  # could it be permanently = {0} if all changes were done in a learn_batch call scope?
-	weights_gradients: list[Matrix]
-	biases_gradients: list[Vector]
-
 	"""operations"""
 
-	def reset_gradient(self):  # do before start each learn of data_point
-		for i_layer in range(
-				self.n_layers):  # for each layer, reset his Vectors activations_gradient, biases_gradient and his Matrix weights_gradient
-			self.weights_gradients[i_layer].reset()
-			self.biases_gradients[i_layer].reset()
+	# keeping batch abstract until we actually have it
+	def learn_batch(self, batch: any) -> None:
+		"""
+			process batch
+			calculate cost of prediction
+			backpropagate
+		"""
 
-	def learn_batch(self, batch):
+		# gradients - sum over all data points in batch and take average later  # could it be permanently = {0} if all changes were done in a learn_batch call scope?
+		weights_gradients: list[Matrix]
+		biases_gradients: list[Vector]
 
 		for data_point in batch:
+			feature: any
+			target: any
 			feature, target = data_point.split()
 			# forward go - calculate prediction
 			prediction: Vector = Vector(self.process(feature))
 			# reach end - calculate cost
 			cost: float = quadratic_loss(target, prediction)
 			# backward go - calculate error signal for each layer - get gradient for each parameter
+			self.backpropagate(cost)
 
-	def backpropagate(self, cost: Vector, target: Vector):  # compute gradient
+
+	def backpropagate(self, cost: float):  # compute gradient
+		# partial derivatives - reset for each data_point
+		error_signals: list[Vector]
 		return
 
 	"""
-		analisis
+		analysis
 	"""
 
 	def analyse(self) -> None:
