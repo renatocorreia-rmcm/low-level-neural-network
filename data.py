@@ -13,7 +13,6 @@ class Vector:
 
 	value: list[float]
 
-
 	"""
 		constructor
 	"""
@@ -34,7 +33,6 @@ class Vector:
 			else:
 				value = [0] * size
 		self.value = value
-
 
 	"""
 		structural operations
@@ -63,12 +61,16 @@ class Vector:
 	def __iter__(self):  # -> Iterator which should be imported from Typing
 		return iter(self.value)
 
+	def transposed(self):  # returns (1 x n) matrix
+		out: Matrix
+		out = Matrix([self.value])
+		return out
 
 	"""
 		data operations
 	"""
 
-	def reset(self):  # set all values to 0 keeping dimensions sizes constant
+	def clean(self):  # set all values to 0 keeping dimensions sizes constant
 		self.value = [0] * len(self)
 
 	def append(self, data: float) -> None:
@@ -79,7 +81,6 @@ class Vector:
 
 	def __setitem__(self, index: int, data: float) -> None:
 		self.value[index] = data
-
 
 	"""
 		mathematical operations
@@ -107,14 +108,19 @@ class Vector:
 			return out
 		# argument type error
 		return None
+
 	def __radd__(self, other: any) -> Vector:
 		# commutative
 		return self.__add__(other)
 
 	def __sub__(self, other: Vector) -> Vector:
 		return self.__add__(-other)
+
 	def __rsub__(self, other: any) -> Vector:
 		return -(self.__sub__(other))
+
+	def __truediv__(self, other: float):
+		return self.__mul__(1/other)
 
 	def __rtruediv__(self, other: float) -> Vector:
 		# element wise
@@ -123,7 +129,7 @@ class Vector:
 			out[i] /= self[i]
 		return out
 
-	def __mul__(self, other: any) -> Vector:
+	def __mul__(self, other: any) -> any:
 		# hadamard Product
 		if isinstance(other, Vector):
 			out: Vector = self.copy()
@@ -136,7 +142,14 @@ class Vector:
 			for i in range(len(out)):
 				out[i] *= other
 			return out
+		# column_vector x line_matrix
+		elif isinstance(other, Matrix):  # todo: is returning None to valid coll_vector * line_matrix
+			collumn_matrix: Matrix
+			collumn_matrix = Matrix([[self[i]] for i in range(len(self))])
+			return collumn_matrix*other
+
 		return None
+
 	def __rmul__(self, other: any):
 		# commutative
 		return self.__mul__(other)
@@ -162,10 +175,10 @@ class Matrix:
 		constructor
 	"""
 
-	def __init__(self, value: list[list[float]] = None) -> None:
+	def __init__(self, value: list[list[float]] = None) -> None:  # todo: implement [[0] * size_coll for _ in range(size_line)] directly into constructor
 		if value is None:
 			value = []
-		self.value = value
+		self.value = value.copy()
 
 
 	"""
@@ -175,8 +188,10 @@ class Matrix:
 	def copy(self) -> Matrix:
 		return Matrix(self.value.copy())
 
-	def reset(self) -> None:  # set all values to 0 keeping dimensions constant
-		self.value = [[0] * len(self[0])] * len(self)
+	def clean(self) -> None:  # set all values to 0 keeping dimensions constant
+		for i in range(len(self)):
+			for j in range(len(self[0])):
+				self[i][j] = 0
 
 	def __str__(self) -> str:
 		"""
@@ -195,6 +210,16 @@ class Matrix:
 	def __len__(self) -> int:
 		return len(self.value)
 
+	def transpose(self) -> Matrix:
+		"""
+		return new object transposed. don't modify caller object
+		"""
+		out = Matrix([[] for _ in range(len(self[0]))])  # create out with c lines, where c is the number of collumns of self
+		for line in self:
+			for i_coll, coll in enumerate(line):
+				out[i_coll].append(coll)
+
+		return out
 
 	"""
 		data operations
@@ -205,7 +230,6 @@ class Matrix:
 
 	def __getitem__(self, index: int) -> list[float]:
 		return self.value[index]
-
 
 	"""
 		mathematical operations
@@ -218,18 +242,39 @@ class Matrix:
 			for i_line, line in enumerate(self):
 				for i_coll, num in enumerate(line):
 					out[i_line] += num * vec[i_coll]
+
 			return out
-		# ANY NEED TO IMPLEMENT THIS?
-		elif isinstance(other, Matrix):  # matrix x matrix
-			return None
+		elif isinstance(other, Matrix):  # matrix x matrix  # todo: IMPLEMENT
+			out: Matrix = Matrix([[0]*len(other[0]) for _ in range(len(self))])
+			for i_line, line in enumerate(self):
+				for i_coll_other in range(len(other[0])):
+					for i_line_other in range(len(other)):
+						out[i_line][i_coll_other] += self[i_line][i_line_other]*other[i_line_other][i_coll_other]
 
-		return None
+			return out
+		elif isinstance(other, float):  # matrix * scalar
+			out: Matrix = self.copy()
+			for i_line in range(len(self)):
+				for i_coll in range(len(self[0])):
+					out[i_line][i_coll] *= other
 
+			return out
+
+	def __truediv__(self, other: float) -> Matrix:
+		return self.__mul__(1/other)
 
 	def __sub__(self, other: Matrix) -> Matrix:
 		out: Matrix = self.copy()
 		for i_line in range(len(self)):
 			for i_coll in range(len(self[0])):
 				out[i_line][i_coll] -= other[i_line][i_coll]
+
+		return out
+
+	def __add__(self, other: Matrix) -> Matrix:
+		out: Matrix = self.copy()
+		for i_line in range(len(other)):
+			for i_coll in range(len(other)):
+				out[i_line][i_coll] += other[i_line][i_coll]
 
 		return out
