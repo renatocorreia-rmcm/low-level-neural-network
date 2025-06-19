@@ -180,7 +180,7 @@ class NeuralNetwork:
 
 		for i_layer in range(1, self.n_layers):
 			# (▽ Wl C) = δ_l * (a_l-1)T
-			weights_gradient_i = error_signals[i_layer]*(self.layers[i_layer-1].transposed())  # todo: fix: is returning None for some reason
+			weights_gradient_i = error_signals[i_layer]*(self.layers[i_layer-1].transposed())
 			weights_gradients.append(weights_gradient_i)
 			# (▽ bl C) = δ_l
 			biases_gradient_i = error_signals[i_layer]
