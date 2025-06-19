@@ -143,7 +143,7 @@ class Vector:
 				out[i] *= other
 			return out
 		# column_vector x line_matrix
-		elif isinstance(other, Matrix):  # todo: is returning None to valid coll_vector * line_matrix
+		elif isinstance(other, Matrix):
 			collumn_matrix: Matrix
 			collumn_matrix = Matrix([[self[i]] for i in range(len(self))])
 			return collumn_matrix*other
@@ -244,7 +244,7 @@ class Matrix:
 					out[i_line] += num * vec[i_coll]
 
 			return out
-		elif isinstance(other, Matrix):  # matrix x matrix  # todo: IMPLEMENT
+		elif isinstance(other, Matrix):  # matrix x matrix
 			out: Matrix = Matrix([[0]*len(other[0]) for _ in range(len(self))])
 			for i_line, line in enumerate(self):
 				for i_coll_other in range(len(other[0])):

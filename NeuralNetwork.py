@@ -1,15 +1,6 @@
 """
-	The object of this class is a fully connected neural network
-	of given size.
-	It name and parameters may be backuped automatically in a .txt,
-	well as loaded from the .txt back to the object.
-
-	Its most relevant methods are:
-		process(data_point)  # calculate prediction
-		learn_batch(batch)  # calculate prediction and cost, then backpropagate
-		analyse()  #  print parameters
+	implementation of the NeuralNetwork Class
 """
-
 
 """ CONVEÇÕES DESTA IMPLEMENTAÇÃO
 
@@ -33,7 +24,6 @@ Convenção de nomeação de parâmetros referentes a camadas
 	que não necessariamente são a 0 e a 1
 """
 
-
 """
 	external dependencies
 """
@@ -46,7 +36,7 @@ from data import Matrix
 from mathematical_functions import sigmoid
 from mathematical_functions import sigmoid_derivative
 from mathematical_functions import quadratic_loss
-
+from mathematical_functions import quadratic_loss_derivative
 
 """
 	CLASS
@@ -54,10 +44,17 @@ from mathematical_functions import quadratic_loss
 
 
 class NeuralNetwork:
+	"""
+		fully connected neural network
+		of given size.
+		It name and parameters may be backuped automatically in a .txt,
+		well as loaded from the.txt back to the object.
+	"""
+
 	# layers
 	n_layers: int
 	layers_sizes: list[int]
-	layers: list[Vector]  # hold activations
+	layers: list[Vector]  # store activations
 	# parameters
 	weights: list[Matrix]
 	biases: list[Vector]
@@ -67,6 +64,9 @@ class NeuralNetwork:
 	"""
 
 	def activate(self, i_l1: int) -> None:
+		"""
+		:param i_l1: index of layer to compute activations
+		"""
 		i_l0: int = i_l1 - 1
 		# calculate activation function parameters
 		l0: Vector = self.layers[i_l0]
@@ -77,6 +77,9 @@ class NeuralNetwork:
 		self.layers[i_l1] = sigmoid(z_l1)
 
 	def process(self, feature: list[float]) -> list[float]:
+		"""
+		:return: prediction
+		"""
 		feature: Vector = Vector(feature)
 		# load input
 		self.layers[0] = feature
@@ -89,36 +92,102 @@ class NeuralNetwork:
 		learning
 	"""
 
-	"""operations"""
+	# parameters
+	weights_gradients: list[Matrix]
+	biases_gradients: list[Vector]
 
-	# keeping batch abstract until we actually have it
-	def learn_batch(self, batch: any) -> None:
+	# operations
+
+	def learn_batch(self, batch: any) -> None:  # todo: keeping batch abstract until we actually have it
+		""" for data_point in batch:
+				process data_point 	- forward go
+				calculate cost 		- reach end
+				backpropagate 		- backward go
+			nn -= ▽C
 		"""
-			process batch
-			calculate cost of prediction
-			backpropagate
-		"""
 
-		# gradients - sum over all data points in batch and take average later  # could it be permanently = {0} if all changes were done in a learn_batch call scope?
-		weights_gradients: list[Matrix]
-		biases_gradients: list[Vector]
+		# reset gradient
+		for i_layer in range(self.n_layers):
+			self.weights_gradients[i_layer].clean()
+			self.biases_gradients[i_layer].clean()
 
+		# somatory of each data_point gradient
 		for data_point in batch:
-			feature: any
-			target: any
-			feature, target = data_point.split()
+
+			feature: list[float]
+			target: Vector
+			feature = data_point[0]
+			target = Vector(data_point[1])
+
 			# forward go - calculate prediction
 			prediction: Vector = Vector(self.process(feature))
 			# reach end - calculate cost
-			cost: float = quadratic_loss(target, prediction)
-			# backward go - calculate error signal for each layer - get gradient for each parameter
-			self.backpropagate(cost)
+			cost: float = quadratic_loss(prediction, target)
+			# backward go - calculate error signal for each layer then gradient for each parameter
+			gradients: tuple[list[Matrix], list[Vector]] = self.backpropagate(cost, target)
+			weights_gradients: list[Matrix] = gradients[0]
+			biases_gradients: list[Vector] = gradients[1]
+			for i_layer in range(1, self.n_layers):  # todo: fix: weights_gradients is an list of None here.
+				self.weights_gradients[i_layer] += weights_gradients[i_layer]
+				self.biases_gradients[i_layer] += biases_gradients[i_layer]
 
+		# transform batch somatory into batch average
+		for i_layer in range(self.n_layers):
+			self.weights_gradients[i_layer] /= len(batch)
+			self.biases_gradients[i_layer] /= len(batch)
+		# subtract each partial derivative average from its corresponding parameter  # nn -= ▽C
+		for i_layer in range(1, self.n_layers):
+			self.weights[i_layer] -= self.weights_gradients[i_layer]
+			self.biases[i_layer] -= self.biases_gradients[i_layer]
 
-	def backpropagate(self, cost: float):  # compute gradient
-		# partial derivatives - reset for each data_point
-		error_signals: list[Vector]
-		return
+	def backpropagate(self, cost: float, target: Vector) -> tuple[list[Matrix], list[Vector]]:
+		# layers partial derivatives
+		error_signals: list[Vector] = self.compute_error_signals(target)
+		# gradient
+		return self.compute_gradient(error_signals)
+
+	def compute_error_signals(self, target: Vector) -> list[Vector]:
+		error_signals: list[Vector] = []  # will be used as a stack, since were iterating from L to 0
+
+		""" L """
+		# δ_L =  f'(L) ⊙ ( ▽ aL C)
+		error_signal_L = sigmoid_derivative(self.layers[-1]) * quadratic_loss_derivative(self.layers[-1], target)
+		error_signals = [error_signal_L] + error_signals
+
+		""" l_i """
+		# δ_l = (f'(l))  ⊙  ( (Wl+1)T ⋅ δ_l+1 )
+		for i_layer in range(self.n_layers - 2, 0, -1):
+			error_signal_i: Vector
+			next_error_signal: Vector = error_signals[0]
+
+			error_signal_i = sigmoid_derivative(self.layers[i_layer]) * (
+						self.weights[i_layer + 1].transpose() * next_error_signal)
+
+			error_signals = [error_signal_i] + error_signals
+
+		""" l_0 """
+		error_signals = [None] + error_signals
+
+		return error_signals
+
+	def compute_gradient(self, error_signals: list[Vector]) -> tuple[list[Matrix],list[Vector]]:
+		"""
+		:return: list of gradient pairs (weights_li, biases_li)
+		"""
+
+		weights_gradients: list[Matrix] = [Matrix(None)]
+		biases_gradients: list[Vector] = [Vector(None)]
+
+		for i_layer in range(1, self.n_layers):
+			# (▽ Wl C) = δ_l * (a_l-1)T
+			weights_gradient_i = error_signals[i_layer]*(self.layers[i_layer-1].transposed())  # todo: fix: is returning None for some reason
+			weights_gradients.append(weights_gradient_i)
+			# (▽ bl C) = δ_l
+			biases_gradient_i = error_signals[i_layer]
+			biases_gradients.append(biases_gradient_i)
+
+		gradient = (weights_gradients, biases_gradients)
+		return gradient
 
 	"""
 		analysis
@@ -158,6 +227,14 @@ class NeuralNetwork:
 	"""
 
 	def __init__(self, layers_sizes: list[int]):
+		"""
+
+		:param layers_sizes:
+		"""
+
+		"""gradient l0"""  # others are added above together with the random initial parameters
+		self.weights_gradients = [Matrix(None)]
+		self.biases_gradients = [Vector(None)]
 
 		"""initialize layers"""
 		self.layers_sizes = layers_sizes
@@ -177,6 +254,10 @@ class NeuralNetwork:
 			weights_l: Matrix = Matrix()
 			size_l0 = self.layers_sizes[i_layer - 1]  # size of output layer
 			size_l1 = self.layers_sizes[i_layer]  # size of input layer
+
+			"""gradient"""
+			self.weights_gradients.append(Matrix([[0] * size_l0 for _ in range(size_l1)]))
+
 			# create new lines wich represent (a_(l1, i_line) weights)
 			for i_line in range(size_l1):
 				line: list[float] = []
@@ -194,6 +275,10 @@ class NeuralNetwork:
 		for i_layer in range(1, self.n_layers):
 			biases: Vector = Vector()
 			layer_size = layers_sizes[i_layer]
+
+			"""gradient"""
+			self.biases_gradients.append(Vector([0]*layer_size))
+
 			# fill new biases with random bias
 			for i_bias in range(layer_size):
 				bias: float = randint(-10, 10) / 10
