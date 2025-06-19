@@ -1,12 +1,19 @@
 from NeuralNetwork import NeuralNetwork
-from data import Vector
 
-jorge: NeuralNetwork = NeuralNetwork([3, 3, 2])
+jorge: NeuralNetwork = NeuralNetwork([4, 3, 2, 1])
 
-feature_0: list[float] = [30, 50, 10]
+feature_0 = [30, 50, 10, 5]
+target_0 = [0.5]
 
-prediction_0: list[float] = jorge.process(feature_0)
+feature_1 = [40, 60, 0, 20]
+target_1 = [0.7]
 
-print(jorge.analyse())
+batch = [(feature_0, target_0), (feature_1, target_1)]
 
-print(prediction_0)
+print(f"analysis before:\n")
+jorge.analyse()
+
+jorge.learn_batch(batch)
+
+print(f"analysis after:\n")
+jorge.analyse()
