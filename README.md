@@ -15,18 +15,8 @@ The class initialize a neural network object with random weights and biases,
 taking amount and size of layers as arguments
 
 
-## ToDo
-- Cost function
-- .txt for parameters backup
-    - dimentions
-    - weights and biases
-    - activation function used
-    - cost function used
-- Back Propagation
-
-
 ## References
-- [Neural networks](https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&feature=shared)
+- [Neural networks playlist](https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&feature=shared)
     by 3Blue1Brown
-- [Backpropagtion](https://youtu.be/SmZmBKc7Lrs?feature=shared)
-    by Artem Kirsanov
+- [Backpropagtion article](https://en.m.wikipedia.org/wiki/Backpropagation)
+    by Wikipedia
