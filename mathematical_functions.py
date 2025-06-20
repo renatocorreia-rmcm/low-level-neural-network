@@ -21,7 +21,7 @@ def sigmoid_derivative(z: Vector) -> Vector:
 def quadratic_loss(prediction: Vector, target: Vector) -> float:
 	cost: float = 0
 	for i_activation in range(len(target)):
-		cost += (prediction[i_activation] - target[i_activation])
+		cost += (prediction[i_activation] - target[i_activation])**2
 	return cost
 
 

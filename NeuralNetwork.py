@@ -24,6 +24,7 @@ Convenção de nomeação de parâmetros referentes a camadas
 	que não necessariamente são a 0 e a 1
 """
 
+
 """
 	external dependencies
 """
@@ -37,6 +38,9 @@ from mathematical_functions import sigmoid
 from mathematical_functions import sigmoid_derivative
 from mathematical_functions import quadratic_loss
 from mathematical_functions import quadratic_loss_derivative
+
+from file_functions import get_line
+from file_functions import set_line
 
 """
 	CLASS
@@ -96,6 +100,7 @@ class NeuralNetwork:
 	weights_gradients: list[Matrix]
 	biases_gradients: list[Vector]
 
+	learn_step: float
 	# operations
 
 	def learn_batch(self, batch: any) -> None:  # todo: keeping batch abstract until we actually have it
@@ -123,11 +128,12 @@ class NeuralNetwork:
 			prediction: Vector = Vector(self.process(feature))
 			# reach end - calculate cost
 			cost: float = quadratic_loss(prediction, target)
+			# print(f"COST: {cost}")
 			# backward go - calculate error signal for each layer then gradient for each parameter
 			gradients: tuple[list[Matrix], list[Vector]] = self.backpropagate(cost, target)
 			weights_gradients: list[Matrix] = gradients[0]
 			biases_gradients: list[Vector] = gradients[1]
-			for i_layer in range(1, self.n_layers):  # todo: fix: weights_gradients is an list of None here.
+			for i_layer in range(1, self.n_layers):
 				self.weights_gradients[i_layer] += weights_gradients[i_layer]
 				self.biases_gradients[i_layer] += biases_gradients[i_layer]
 
@@ -137,8 +143,8 @@ class NeuralNetwork:
 			self.biases_gradients[i_layer] /= len(batch)
 		# subtract each partial derivative average from its corresponding parameter  # nn -= ▽C
 		for i_layer in range(1, self.n_layers):
-			self.weights[i_layer] -= self.weights_gradients[i_layer]
-			self.biases[i_layer] -= self.biases_gradients[i_layer]
+			self.weights[i_layer] -= self.weights_gradients[i_layer] * self.learn_step
+			self.biases[i_layer] -= self.biases_gradients[i_layer] * self.learn_step
 
 	def backpropagate(self, cost: float, target: Vector) -> tuple[list[Matrix], list[Vector]]:
 		# layers partial derivatives
@@ -161,7 +167,7 @@ class NeuralNetwork:
 			next_error_signal: Vector = error_signals[0]
 
 			error_signal_i = sigmoid_derivative(self.layers[i_layer]) * (
-						self.weights[i_layer + 1].transpose() * next_error_signal)
+					self.weights[i_layer + 1].transpose() * next_error_signal)
 
 			error_signals = [error_signal_i] + error_signals
 
@@ -170,7 +176,7 @@ class NeuralNetwork:
 
 		return error_signals
 
-	def compute_gradient(self, error_signals: list[Vector]) -> tuple[list[Matrix],list[Vector]]:
+	def compute_gradient(self, error_signals: list[Vector]) -> tuple[list[Matrix], list[Vector]]:
 		"""
 		:return: list of gradient pairs (weights_li, biases_li)
 		"""
@@ -180,7 +186,7 @@ class NeuralNetwork:
 
 		for i_layer in range(1, self.n_layers):
 			# (▽ Wl C) = δ_l * (a_l-1)T
-			weights_gradient_i = error_signals[i_layer]*(self.layers[i_layer-1].transposed())
+			weights_gradient_i = error_signals[i_layer] * (self.layers[i_layer - 1].transposed())
 			weights_gradients.append(weights_gradient_i)
 			# (▽ bl C) = δ_l
 			biases_gradient_i = error_signals[i_layer]
@@ -223,14 +229,65 @@ class NeuralNetwork:
 			print()
 
 	"""
+		parameters backup
+	"""
+
+	""" file contents for each instance
+		
+		layers_sizes: list[int]
+		
+		wheights: list[Matrix]
+		biases: list[Vector]
+	
+	# .TXT MUST HAVE AT LEAST 1 BLANC AT THE END
+	"""
+
+	# parameters
+
+	file_path: str  # path to .txt from backups/
+
+	# operations
+
+	def store(self) -> None:
+		with open(self.file_path, 'w') as file:
+
+			set_line(file, self.layers_sizes)
+			set_line(file)
+
+			for i_layer, layer_size in enumerate(self.layers_sizes[1:], 1):
+				# set matrix
+				for i_neuron in range(layer_size):
+					set_line(file, self.weights[i_layer][i_neuron])
+				set_line(file)
+				# set bias
+				set_line(file, self.biases[i_layer].value)
+				set_line(file)
+
+	def load(self) -> None:
+		with open(self.file_path, 'r') as file:
+
+			get_line(file)  # clean layers_sizes line
+
+			for i_layer, layer_size in enumerate(self.layers_sizes[1:], 1):
+				# get matrix
+				for i_neuron in range(layer_size):
+					self.weights[i_layer][i_neuron] = get_line(file)
+				# get bias
+				self.biases[i_layer] = Vector(get_line(file))
+
+	"""
 		constructor
 	"""
 
-	def __init__(self, layers_sizes: list[int]):
+	def __init__(self, layers_sizes: list[int], backup_file_name: str, learn_step: float=1):
 		"""
 
-		:param layers_sizes:
 		"""
+
+		self.learn_step = learn_step
+
+		"""backup"""
+		self.file_path = f"backups/{backup_file_name}.txt"
 
 		"""gradient l0"""  # others are added above together with the random initial parameters
 		self.weights_gradients = [Matrix(None)]
@@ -277,10 +334,10 @@ class NeuralNetwork:
 			layer_size = layers_sizes[i_layer]
 
 			"""gradient"""
-			self.biases_gradients.append(Vector([0]*layer_size))
+			self.biases_gradients.append(Vector([0] * layer_size))
 
 			# fill new biases with random bias
 			for i_bias in range(layer_size):
-				bias: float = randint(-10, 10) / 10
+				bias: float = randint(-10, 10) / 500
 				biases.append(bias)
 			self.biases.append(biases)

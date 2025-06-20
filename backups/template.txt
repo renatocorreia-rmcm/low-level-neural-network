@@ -1,0 +1,14 @@
+layers_sizes
+
+weights layer_1
+
+bias_layer_1
+
+weights layer_[...]
+
+biases layer_[...]
+
+weights layer_L-1
+
+biases layer_L-1
+*blanck line*

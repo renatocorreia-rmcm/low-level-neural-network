@@ -231,6 +231,9 @@ class Matrix:
 	def __getitem__(self, index: int) -> list[float]:
 		return self.value[index]
 
+	def __setitem__(self, index: int, value: list[float]):
+		self.value[index] = value
+
 	"""
 		mathematical operations
 	"""
