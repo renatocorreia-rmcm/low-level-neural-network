@@ -31,16 +31,16 @@ Convenção de nomeação de parâmetros referentes a camadas
 
 from random import randint
 
-from data import Vector
-from data import Matrix
+from modules.data import Vector
+from modules.data import Matrix
 
-from mathematical_functions import sigmoid
-from mathematical_functions import sigmoid_derivative
-from mathematical_functions import quadratic_loss
-from mathematical_functions import quadratic_loss_derivative
+from modules.mathematical_functions import sigmoid
+from modules.mathematical_functions import sigmoid_derivative
+from modules.mathematical_functions import quadratic_loss
+from modules.mathematical_functions import quadratic_loss_derivative
 
-from file_functions import get_line
-from file_functions import set_line
+from modules.file_functions import get_line
+from modules.file_functions import set_line
 
 """
 	CLASS

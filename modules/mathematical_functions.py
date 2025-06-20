@@ -3,7 +3,7 @@
     used in neural network implementation
 """
 
-from data import Vector
+from modules.data import Vector
 from math import e
 
 
