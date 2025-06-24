@@ -1,19 +1,36 @@
-from NeuralNetwork import NeuralNetwork
-
-jorge: NeuralNetwork = NeuralNetwork([10, 5, 4], "handwritten_digits_recognition", 1.0)  # todo: solve crash when learn_step = 1
-
-feature_0 = [30, 50, 10, 5, 40, 60, 0, 20, 90, 80]
-target_0 = [1.0, 0.0, 0.0, 0.0,]
-
-feature_1 = [40, 60, 0, 20, 100, 80, 85, 20, 50, 10]
-target_1 = [0.0, 0.0, 0.0, 1.0]
-
-batch = [(feature_0, target_0), (feature_1, target_1)]
+from NeuralNetwork import NeuralNetwork  # my class
+from MNIST_data_set import MnistDataLoader  # the MNIST dataset dataloader
 
 
+# initialize mnist data loader
+data_loader = MnistDataLoader.MnistDataloader()
+# load data set
+data_set = data_loader.load_data()
+
+
+# initialize neural network
+jorge: NeuralNetwork = NeuralNetwork(
+	[784, 16, 16, 10], "handwritten_digits_recognition", data_set
+)
+
+
+""" model train example  """
+"""
+n_epochs = 15
+learn_step = 0.8
+
+print(f"initial accuracy: {jorge.get_accuracy()}")
+
+for i_epoch in range(n_epochs):
+	print(f"epoch {i_epoch} -----")
+	jorge.train_epoch(learn_step)
+	print(f"accuracy: {jorge.get_accuracy()}")
+	learn_step *= 0.5  # scaffolding technique
+	
+# jorge.store() if want to keep those parameters in furthers initializations
+"""
+
+
+""" just testing the accuracy of the model i have already trained """
 jorge.load()
-
-jorge.learn_batch(batch)
-
-
-jorge.store()
+print(jorge.get_accuracy())
