@@ -96,7 +96,7 @@ class MnistDataloader:
 
         return images, labels
 
-    def load_data(self) -> tuple[tuple[list[list[float]], list[float]], tuple[list[list[float]], list[float]]]:
+    def load_data(self) -> tuple[tuple[list[list[float]], list[int]], tuple[list[list[float]], list[int]]]:
         """
         :return: 2 tuples: training data and testing data
         each tuple contains the features list and the targets list
