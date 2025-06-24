@@ -1,14 +1,13 @@
 """
-	Vector and Matrix types.
+	implementation of Vector and Matrix types.
 """
-
-from __future__ import annotations  # allows to refer to Vector type inside Vector class definition
 
 
 class Vector:
 	"""
-		list of floats
-		operators overloaded to linear algebra based operations.
+		List of floats
+
+		Operators overloaded to linear algebra based operations.
 	"""
 
 	value: list[float]
@@ -17,12 +16,11 @@ class Vector:
 		constructor
 	"""
 
-	# there should be a better way to define that
 	def __init__(self, value: list[float] = None, size: int = None) -> None:
 		"""
 		Do not pass both arguments
 
-		Default Vector: [ ]
+		Default Vector: []
 
 		:param value: ready list
 		:param size: size of {0} vector
@@ -38,7 +36,7 @@ class Vector:
 		structural operations
 	"""
 
-	def copy(self) -> Vector:
+	def copy(self) -> 'Vector':
 		return Vector(self.value.copy())
 
 	def __list__(self) -> list[float]:
@@ -49,7 +47,7 @@ class Vector:
 
 		:return: string where each line corresponds to a vector element
 		"""
-		text = """"""
+		text: str = """"""
 		for data in self.value[:-1]:
 			text += f"{data}\n"
 		text += str(self.value[-1])
@@ -58,10 +56,13 @@ class Vector:
 	def __len__(self) -> int:
 		return len(self.value)
 
-	def __iter__(self):  # -> Iterator which should be imported from Typing
+	def __iter__(self):
 		return iter(self.value)
 
-	def transposed(self):  # returns (1 x n) matrix
+	def transposed(self) -> 'Matrix':
+		"""
+		:return: (1 x n) Matrix object
+		"""
 		out: Matrix
 		out = Matrix([self.value])
 		return out
@@ -70,7 +71,10 @@ class Vector:
 		data operations
 	"""
 
-	def clean(self):  # set all values to 0 keeping dimensions sizes constant
+	def clean(self) -> None:
+		"""
+		set all values to 0 keeping dimensions sizes constant
+		"""
 		self.value = [0] * len(self)
 
 	def append(self, data: float) -> None:
@@ -86,17 +90,24 @@ class Vector:
 		mathematical operations
 	"""
 
-	def __neg__(self):
-		# element wise
+	def __neg__(self) -> 'Vector':
+		"""
+		element wise
+		"""
 		out: Vector = self.copy()
 		for i in range(len(out)):
 			out[i] *= -1
 		return out
 
-	def __add__(self, other: any) -> Vector:
+	def __add__(self, other: any) -> 'Vector':
+		"""
+
+		:param other: Vector or scalar(element wise)
+		:return:
+		"""
 		# Vector + Vector
 		if isinstance(other, Vector):
-			out: Vector = other.copy()
+			out: Vector = self.copy()
 			for i in range(len(self)):
 				out[i] += other[i]
 			return out
@@ -109,20 +120,20 @@ class Vector:
 		# argument type error
 		return None
 
-	def __radd__(self, other: any) -> Vector:
-		# commutative
+	def __radd__(self, other: any) -> 'Vector':
+		# call __add__ (commutative)
 		return self.__add__(other)
 
-	def __sub__(self, other: Vector) -> Vector:
+	def __sub__(self, other: 'Vector') -> 'Vector':
 		return self.__add__(-other)
 
-	def __rsub__(self, other: any) -> Vector:
+	def __rsub__(self, other: any) -> 'Vector':
 		return -(self.__sub__(other))
 
-	def __truediv__(self, other: float):
+	def __truediv__(self, other: float) -> 'Vector':
 		return self.__mul__(1/other)
 
-	def __rtruediv__(self, other: float) -> Vector:
+	def __rtruediv__(self, other: float) -> 'Vector':
 		# element wise
 		out: Vector = Vector([other]*len(self))
 		for i in range(len(self)):
@@ -150,11 +161,11 @@ class Vector:
 
 		return None
 
-	def __rmul__(self, other: any):
-		# commutative
+	def __rmul__(self, other: any) -> 'Vector':
+		# call __mul__ (commutative)
 		return self.__mul__(other)
 
-	def __rpow__(self, base: float):
+	def __rpow__(self, base: float) -> 'Vector':
 		# element wise
 		out: Vector = self.copy()
 		for i in range(len(self)):
@@ -170,7 +181,6 @@ class Matrix:
 
 	value: list[list[float]]
 
-
 	"""
 		constructor
 	"""
@@ -180,12 +190,11 @@ class Matrix:
 			value = []
 		self.value = value.copy()
 
-
 	"""
 		structural operations
 	"""
 
-	def copy(self) -> Matrix:
+	def copy(self) -> 'Matrix':
 		return Matrix(self.value.copy())
 
 	def clean(self) -> None:  # set all values to 0 keeping dimensions constant
@@ -198,23 +207,23 @@ class Matrix:
 
 		:return: string where each line corresponds to a matrix line
 		"""
-		text = """"""
+		text: str = """"""
 		for line in self.value[:-1]:
 			text += f"{line}\n"
 		text += str(self.value[-1])
 		return text
 
-	def __iter__(self):  # -> Iterator which should be imported from Typing  # defines an interator to object allowing enumerate(matrix)  # the iterator created in this case its just the default iterator for list[list[float]]
+	def __iter__(self):
 		return iter(self.value)
 
 	def __len__(self) -> int:
 		return len(self.value)
 
-	def transpose(self) -> Matrix:
+	def transpose(self) -> 'Matrix':
 		"""
 		return new object transposed. don't modify caller object
 		"""
-		out = Matrix([[] for _ in range(len(self[0]))])  # create out with c lines, where c is the number of collumns of self
+		out: Matrix = Matrix([[] for _ in range(len(self[0]))])  # create out with c lines, where c is the number of collumns of self
 		for line in self:
 			for i_coll, coll in enumerate(line):
 				out[i_coll].append(coll)
@@ -255,7 +264,7 @@ class Matrix:
 						out[i_line][i_coll_other] += self[i_line][i_line_other]*other[i_line_other][i_coll_other]
 
 			return out
-		elif isinstance(other, float):  # matrix * scalar
+		elif isinstance(other, (float, int)):  # matrix * scalar
 			out: Matrix = self.copy()
 			for i_line in range(len(self)):
 				for i_coll in range(len(self[0])):
@@ -263,10 +272,10 @@ class Matrix:
 
 			return out
 
-	def __truediv__(self, other: float) -> Matrix:
+	def __truediv__(self, other: float) -> 'Matrix':
 		return self.__mul__(1/other)
 
-	def __sub__(self, other: Matrix) -> Matrix:
+	def __sub__(self, other: 'Matrix') -> 'Matrix':
 		out: Matrix = self.copy()
 		for i_line in range(len(self)):
 			for i_coll in range(len(self[0])):
@@ -274,10 +283,10 @@ class Matrix:
 
 		return out
 
-	def __add__(self, other: Matrix) -> Matrix:
+	def __add__(self, other: 'Matrix') -> 'Matrix':
 		out: Matrix = self.copy()
 		for i_line in range(len(other)):
-			for i_coll in range(len(other)):
+			for i_coll in range(len(other[0])):
 				out[i_line][i_coll] += other[i_line][i_coll]
 
 		return out
