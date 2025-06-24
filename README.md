@@ -30,4 +30,5 @@ and outputs the result in the correponding neuron of the last layer (size `10`)
 
 Its parameters are backuped in the "handwritten_digits_recognition.txt", so they are directly loaded into the model. <br>
 As seen in the output, this particular instance has an accuracy of **75.60%**
-![Captura de tela 2025-06-24 114041.png](..%2FOneDrive%2FImagens%2FCapturas%20de%20tela%2FCaptura%20de%20tela%202025-06-24%20114041.png)
+![accuracy testing output](https://github.com/user-attachments/assets/f9788b0c-0c1b-4cf1-bb4e-0ebc134512c7)
+
