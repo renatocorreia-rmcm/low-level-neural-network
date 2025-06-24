@@ -11,4 +11,5 @@ biases layer_[...]
 weights layer_L-1
 
 biases layer_L-1
-*blanck line*
+
+*blanck line(s)*
