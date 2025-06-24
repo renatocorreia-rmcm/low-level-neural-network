@@ -278,7 +278,7 @@ class NeuralNetwork:
 		constructor
 	"""
 
-	def __init__(self, layers_sizes: list[int], backup_file_name: str, data_set: tuple[tuple[list[list[float]], list[float]], tuple[list[list[float]], list[float]]]) -> None:
+	def __init__(self, layers_sizes: list[int], backup_file_name: str, data_set: tuple[tuple[list[list[float]], list[int]], tuple[list[list[float]], list[int]]]) -> None:
 		"""
 
 		"""
