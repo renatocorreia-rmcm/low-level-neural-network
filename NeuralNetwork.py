@@ -184,8 +184,8 @@ class NeuralNetwork:
 				self.biases_gradients[i_layer] /= batch_size
 			# subtract each partial derivative average from its corresponding parameter  # nn -= ▽C
 			for i_layer in range(1, self.n_layers):
-				self.weights[i_layer] -= self.weights_gradients[i_layer] * self.learn_step
-				self.biases[i_layer] -= self.biases_gradients[i_layer] * self.learn_step
+				self.weights[i_layer] -= self.weights_gradients[i_layer] * learn_step
+				self.biases[i_layer] -= self.biases_gradients[i_layer] * learn_step
 
 	def backpropagate(self, target: Vector) -> tuple[list[Matrix], list[Vector]]:
 		# layers partial derivatives
